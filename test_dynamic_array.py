@@ -1,4 +1,3 @@
-import pytest
 from dynamic_array import DynamicArray
 
 
