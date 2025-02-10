@@ -83,7 +83,7 @@ class DynamicArray:
 
     def from_list(self, lst):
         """Load elements from a Python list."""
-        self.chunks = [[None] * self.chunk_size \
+        self.chunks = [[None] * self.chunk_size
                        for _ in range((len(lst) // self.chunk_size) + 1)]
         self.size = 0
         for item in lst:
