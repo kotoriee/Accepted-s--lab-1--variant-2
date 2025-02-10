@@ -2,8 +2,12 @@
 DynamicArray Implementation
 """
 
+
 class DynamicArray:
-    """A dynamic array using fixed-size chunks with a configurable growth factor."""
+    """
+    A dynamic array using fixed-size chunks
+    with a configurable growth factor.
+    """
 
     def __init__(self, chunk_size=4, growth_factor=2):
         """
@@ -11,7 +15,8 @@ class DynamicArray:
 
         Parameters:
         chunk_size (int): The size of each memory chunk.
-        growth_factor (int): The factor by which the number of chunks grows.
+        growth_factor (int): The factor
+        by which the number of chunks grows.
         """
         self.chunk_size = chunk_size
         self.growth_factor = growth_factor
@@ -52,7 +57,10 @@ class DynamicArray:
         self.chunks[chunk_index][element_index] = value
 
     def remove(self, index):
-        """Remove an element at a specific index, shifting elements left."""
+        """
+        Remove an element at a specific index,
+        shifting elements left.
+        """
         if index < 0 or index >= self.size:
             raise IndexError("Index out of bounds")
 
@@ -61,7 +69,8 @@ class DynamicArray:
             element_index = i % self.chunk_size
             next_chunk_index = (i + 1) // self.chunk_size
             next_element_index = (i + 1) % self.chunk_size
-            self.chunks[chunk_index][element_index] = self.chunks[next_chunk_index][next_element_index]
+            self.chunks[chunk_index][element_index] = \
+            self.chunks[next_chunk_index][next_element_index]
 
         last_chunk_index = (self.size - 1) // self.chunk_size
         last_element_index = (self.size - 1) % self.chunk_size
@@ -74,7 +83,8 @@ class DynamicArray:
 
     def from_list(self, lst):
         """Load elements from a Python list."""
-        self.chunks = [[None] * self.chunk_size for _ in range((len(lst) // self.chunk_size) + 1)]
+        self.chunks = [[None] * self.chunk_size \
+        for _ in range((len(lst) // self.chunk_size) + 1)]
         self.size = 0
         for item in lst:
             self.add(item)
