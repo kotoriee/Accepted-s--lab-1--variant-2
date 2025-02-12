@@ -1,95 +1,96 @@
 class DynamicArray:
-    """
-    A dynamic array using fixed-size chunks
-    with a configurable growth factor.
-    """
-    def __init__(self, chunk_size=4, growth_factor=2):
-        """
-        Initialize a dynamic array.
-        Parameters:
-        chunk_size (int): The size of each memory chunk.
-        growth_factor (int): The factor by which the number of chunks grows.
-        """
-        if chunk_size <= 0 or growth_factor <= 1:
-            raise ValueError("chunk_size must be > 0 \
-            and growth_factor must be > 1")
-        self.chunk_size = chunk_size
-        self.growth_factor = growth_factor
-        self.chunks = [[None] * chunk_size]  # Initialize first chunk
+    """A dynamic array with custom growth factor and Monoid properties."""
+
+    def __init__(self, growth_factor=2):
+        self.capacity = 1
         self.size = 0
+        self.data = [None] * self.capacity
+        self.growth_factor = growth_factor
 
     def _resize(self):
-        """
-        Allocate new chunks based on the growth factor.
-        """
-        num_new_chunks = len(self.chunks) * (self.growth_factor - 1)
-        for _ in range(num_new_chunks):
-            new_chunk = [None] * self.chunk_size
-            self.chunks.append(new_chunk)
+        new_capacity = self.capacity * self.growth_factor
+        new_data = [None] * new_capacity
+        for i in range(self.size):
+            new_data[i] = self.data[i]
+        self.data = new_data
+        self.capacity = new_capacity
 
     def add(self, value):
-        """Add an element to the array."""
-        if self.size % self.chunk_size == 0 and self.size > 0:
+        if self.size == self.capacity:
             self._resize()
-        chunk_index = self.size // self.chunk_size
-        element_index = self.size % self.chunk_size
-        self.chunks[chunk_index][element_index] = value
+        self.data[self.size] = value
         self.size += 1
 
-    def get(self, index):
-        """Retrieve an element by index."""
-        if index < 0 or index >= self.size:
-            raise IndexError("Index out of bounds")
-        chunk_index = index // self.chunk_size
-        element_index = index % self.chunk_size
-        return self.chunks[chunk_index][element_index]
-
     def set(self, index, value):
-        """Set an element at a specific index."""
         if index < 0 or index >= self.size:
             raise IndexError("Index out of bounds")
-        chunk_index = index // self.chunk_size
-        element_index = index % self.chunk_size
-        self.chunks[chunk_index][element_index] = value
+        self.data[index] = value
 
-    def remove(self, index):
-        """
-        Remove an element at a specific index,
-        shifting elements left.
-        """
+    def get(self, index):
         if index < 0 or index >= self.size:
             raise IndexError("Index out of bounds")
-        for i in range(index, self.size - 1):
-            chunk_index = i // self.chunk_size
-            element_index = i % self.chunk_size
-            next_chunk_index = (i + 1) // self.chunk_size
-            next_element_index = (i + 1) % self.chunk_size
-            self.chunks[chunk_index][element_index] = \
-                self.chunks[next_chunk_index][next_element_index]
-        last_chunk_index = (self.size - 1) // self.chunk_size
-        last_element_index = (self.size - 1) % self.chunk_size
-        self.chunks[last_chunk_index][last_element_index] = None
-        self.size -= 1
+        return self.data[index]
 
-    def to_list(self):
-        """Convert the dynamic array to a regular Python list."""
-        return [self.get(i) for i in range(self.size)]
+    def remove(self, value):
+        found = False
+        for i in range(self.size):
+            if self.data[i] == value:
+                found = True
+            if found and i < self.size - 1:
+                self.data[i] = self.data[i + 1]
+        if found:
+            self.data[self.size - 1] = None
+            self.size -= 1
+
+    def size(self):
+        return self.size
+
+    def member(self, value):
+        return value in self.data[:self.size]
+
+    def reverse(self):
+        self.data[:self.size] = self.data[:self.size][::-1]
 
     def from_list(self, lst):
-        """Load elements from a Python list."""
-        self.chunks = [[None] * self.chunk_size
-                       for _ in range((len(lst) // self.chunk_size) + 1)]
-        self.size = 0
-        for item in lst:
-            self.add(item)
+        self.capacity = max(len(lst), 1) * self.growth_factor
+        self.size = len(lst)
+        self.data = [None] * self.capacity
+        for i in range(len(lst)):
+            self.data[i] = lst[i]
+
+    def to_list(self):
+        return self.data[:self.size]
+
+    def filter(self, predicate):
+        new_data = [x for x in self.data[:self.size] if predicate(x)]
+        self.from_list(new_data)
+
+    def map(self, func):
+        for i in range(self.size):
+            self.data[i] = func(self.data[i])
+
+    def reduce(self, func, init_val):
+        """Custom reduce implementation without functools."""
+        acc = init_val
+        for i in range(self.size):
+            acc = func(acc, self.data[i])
+        return acc
+
+    def empty(self):
+        return DynamicArray(self.growth_factor)
+
+    def concat(self, other):
+        if not isinstance(other, DynamicArray):
+            raise TypeError("Can only concatenate with another DynamicArray")
+        new_array = DynamicArray(self.growth_factor)
+        new_array.from_list(self.to_list() + other.to_list())
+        return new_array
 
     def __iter__(self):
-        """Enable iteration over the dynamic array."""
         self._iter_index = 0
         return self
 
     def __next__(self):
-        """Iterator next method."""
         if self._iter_index < self.size:
             value = self.get(self._iter_index)
             self._iter_index += 1
