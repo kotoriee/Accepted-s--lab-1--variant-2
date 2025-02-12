@@ -11,7 +11,8 @@ class DynamicArray:
         growth_factor (int): The factor by which the number of chunks grows.
         """
         if chunk_size <= 0 or growth_factor <= 1:
-            raise ValueError("chunk_size must be > 0 and growth_factor must be > 1")
+            raise ValueError("chunk_size must be > 0 \
+            and growth_factor must be > 1")
         self.chunk_size = chunk_size
         self.growth_factor = growth_factor
         self.chunks = [[None] * chunk_size]  # Initialize first chunk
