@@ -1,32 +1,36 @@
-# GROUP-NAME - lab NUMBER - variant NUMBER
+# Accepted - lab 1 - variant 2
 
-This is an example project which demonstrates project structure and necessary
-CI checks. It is not the best structure for real-world projects, but good
-enough for educational purposes.
+This project implements a dynamic array using fixed-size chunks with a configurable growth factor. <br>
+The dynamic array supports basic operations such as adding, retrieving, updating, and removing elements. <br>
+It also provides efficient memory management by allocating additional chunks only when necessary.
 
 ## Project structure
 
-- `foo.py` -- implementation of `Foo` class with `hello` and `add` features.
-   Stateless.
-- `foo_test.py` -- unit and PBT tests for `Foo`.
-
+- `dynamic_array.py` -- Core implementation of the DynamicArray class.
+- `test_dynamic_array.py` -- Unit tests for the DynamicArray class.
+- `test_dynamic_array_property.py` -- Property tests for the DynamicArray class.
+- `README.md`
 ## Features
 
-- PBT: `test_add_commutative`
+- PBT: `test_add`
+- PBT: `test_get_set`
+- PBT: `test_handle_none`
+- PBT: `test_remove`
+- PBT: `test_iter`
+
 
 ## Contribution
-
-- Aleksandr Penskoi (EMAIL) -- all work.
+- Cao Xinyang -- give a initial
+- Xiong Shichi -- cooperate with Cao Xinyang
 
 ## Changelog
 
-- 29.03.2022 - 2
-  - Add test coverage.
-- 29.03.2022 - 1
-  - Update README. Add formal sections.
-- 29.03.2022 - 0
+
+- 12.02.2025 - 1
+  - Update README. 
+- 10.02.2025 - 0
   - Initial
 
 ## Design notes
 
-- ...
+- https://en.wikipedia.org/wiki/Dynamic_array
