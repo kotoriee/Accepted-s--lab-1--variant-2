@@ -47,10 +47,11 @@ Xinyang on refining the implementation and testing.
 
 ## Changelog
 
-- 12.02.2025 - 1
+- **12.02.2025 - Version 1**  
   - Update README.
-- 10.02.2025 - 0
-  - Initial
+
+- **10.02.2025 - Version 0**  
+  - Initial commit with the core implementation and test cases.
 
 ---
 
