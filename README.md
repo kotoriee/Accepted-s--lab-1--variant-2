@@ -11,16 +11,16 @@ allocating additional chunks only when necessary.
 
 ## Project Structure
 
-- `dynamic_array.py` 
+- `dynamic_array.py`
   Core implementation
   of the DynamicArray class.
-- `test_dynamic_array.py` 
+- `test_dynamic_array.py`
   Unit tests
   for the DynamicArray class.
-- `test_dynamic_array_property.py` 
+- `test_dynamic_array_property.py`
   Property tests
   for the DynamicArray class.
-- `README.md` 
+- `README.md`
   Project documentation.
 
 ---
@@ -43,9 +43,9 @@ allocating additional chunks only when necessary.
 ## Contribution
 
 - **Cao Xinyang**: Provided the initial
-implementation of the `DynamicArray` class.
+  implementation of the `DynamicArray` class.
 - **Xiong Shichi**: Collaborated with Cao
-Xinyang on refining the implementation and testing.
+  Xinyang on refining the implementation and testing.
 
 ---
 
