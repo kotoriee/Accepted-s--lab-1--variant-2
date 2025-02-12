@@ -14,9 +14,9 @@ allocating additional chunks only when necessary.
 - `dynamic_array.py` -- Core implementation
   of the DynamicArray class.
 - `test_dynamic_array.py` -- Unit tests
-for the DynamicArray class.
+  for the DynamicArray class.
 - `test_dynamic_array_property.py` -- Property tests
-for the DynamicArray class.
+  for the DynamicArray class.
 - `README.md` -- Project documentation.
 
 ---
@@ -47,11 +47,10 @@ Xinyang on refining the implementation and testing.
 
 ## Changelog
 
-- **12.02.2025 - Version 1**  
+- 12.02.2025 - 1  
   - Update README.
-
-- **10.02.2025 - Version 0**  
-  - Initial commit with the core implementation and test cases.
+- 10.02.2025 - 0  
+  - Initial
 
 ---
 
