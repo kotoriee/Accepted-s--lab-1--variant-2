@@ -77,18 +77,6 @@ class DynamicArray:
         self.chunks[last_chunk_index][last_element_index] = None
         self.size -= 1
 
-    def to_list(self):
-        """Convert the dynamic array to a regular Python list."""
-        return [self.get(i) for i in range(self.size)]
-
-    def from_list(self, lst):
-        """Load elements from a Python list."""
-        self.chunks = [[None] * self.chunk_size
-                       for _ in range((len(lst) // self.chunk_size) + 1)]
-        self.size = 0
-        for item in lst:
-            self.add(item)
-
     def __iter__(self):
         """Enable iteration over the dynamic array."""
         self._iter_index = 0
