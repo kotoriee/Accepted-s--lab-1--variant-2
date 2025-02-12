@@ -15,10 +15,7 @@ allocating additional chunks only when necessary.
   Core implementation
   of the DynamicArray class.
 - `test_dynamic_array.py`
-  Unit tests
-  for the DynamicArray class.
-- `test_dynamic_array_property.py`
-  Property tests
+  Unit tests and Property-Based tests
   for the DynamicArray class.
 - `README.md`
   Project documentation.
