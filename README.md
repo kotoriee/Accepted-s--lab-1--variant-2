@@ -1,18 +1,23 @@
 # Accepted - Lab 1 - Variant 2
 
-This project implements a dynamic array using fixed-size chunks with a configurable growth factor.  
-The dynamic array supports basic operations such as adding, retrieving, updating, and removing elements.  
-It also provides efficient memory management by allocating additional chunks only when necessary.
+This project implements a dynamic array using fixed-size chunks 
+with a configurable growth factor.  
+The dynamic array supports basic operations such as adding, 
+retrieving, updating, and removing elements.  
+It also provides efficient memory management by 
+allocating additional chunks only when necessary.
 
 ---
 
 ## Project Structure
 
-- `dynamic_array.py` -- Core implementation of the DynamicArray class.
-- `test_dynamic_array.py` -- Unit tests for the DynamicArray class.
-- `test_dynamic_array_property.py` -- Property tests for the DynamicArray class.
+- `dynamic_array.py` -- Core implementation 
+of the DynamicArray class.
+- `test_dynamic_array.py` -- Unit tests 
+for the DynamicArray class.
+- `test_dynamic_array_property.py` -- Property tests 
+for the DynamicArray class.
 - `README.md` -- Project documentation.
-
 ---
 
 ## Features
@@ -36,12 +41,15 @@ It also provides efficient memory management by allocating additional chunks onl
 
 ## Contribution
 
-- **Cao Xinyang**: Provided the initial implementation of the `DynamicArray` class.
-- **Xiong Shichi**: Collaborated with Cao Xinyang on refining the implementation and testing.
+- **Cao Xinyang**: Provided the initial 
+implementation of the `DynamicArray` class.
+- **Xiong Shichi**: Collaborated with Cao 
+Xinyang on refining the implementation and testing.
 
 ---
 
 ## Changelog
+
 - 12.02.2025 - 1
   - Update README. 
 - 10.02.2025 - 0
@@ -51,4 +59,4 @@ It also provides efficient memory management by allocating additional chunks onl
 
 ## Design notes
 
-- https://en.wikipedia.org/wiki/Dynamic_array
+- <https://en.wikipedia.org/wiki/Dynamic_array>
