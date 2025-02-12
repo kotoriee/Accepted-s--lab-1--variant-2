@@ -34,7 +34,8 @@ allocating additional chunks only when necessary.
   Validates the `set` and `get` methods for retrieving and updating elements at
   specific indices, ensuring index boundaries are respected.
 - **PBT: `test_handle_none`**
-  Ensures the dynamic array can store, retrieve, and process `None` values without errors.
+  Ensures the dynamic array can store, retrieve, and process `None` values
+  without errors.
 - **PBT: `test_remove`**
   Tests the `remove` method to confirm elements are correctly removed, and the
   remaining elements shift left as expected.
@@ -77,6 +78,7 @@ allocating additional chunks only when necessary.
 ---
 
 ## Changelog
+
 - 12.02.2025 - 2  
    - Added missing methods, added missing unit tests and Property-based tests.
 - 12.02.2025 - 1  
