@@ -15,10 +15,7 @@ allocating additional chunks only when necessary.
   Core implementation
   of the DynamicArray class.
 - `test_dynamic_array.py`
-  Unit tests
-  for the DynamicArray class.
-- `test_dynamic_array_property.py`
-  Property tests
+  Unit tests and Property-Based tests
   for the DynamicArray class.
 - `README.md`
   Project documentation.
@@ -28,15 +25,43 @@ allocating additional chunks only when necessary.
 ## Features
 
 - **PBT: `test_add`**
-  Tests the `add` method to ensure elements are correctly appended to the array.
-- **PBT: `test_get_set`**
-  Validates the `get` and `set` methods for retrieving and updating elements.
+  Tests the `add` method to ensure elements are correctly appended to the
+  dynamic array and that resizing works as expected.
+- **PBT: `test_set_get`**
+  Validates the `set` and `get` methods for retrieving and updating elements at
+  specific indices, ensuring index boundaries are respected.
 - **PBT: `test_handle_none`**
-  Ensures the dynamic array can handle `None` values without errors.
+  Ensures the dynamic array can store, retrieve, and process `None` values
+  without errors.
 - **PBT: `test_remove`**
-  Tests the `remove` method to confirm elements are removed and shifted correctly.
+  Tests the `remove` method to confirm elements are correctly removed, and the
+  remaining elements shift left as expected.
+- **PBT: `test_member`**
+  Verifies that the `member` method correctly determines whether a given value
+  exists in the dynamic array.
+- **PBT: `test_reverse`**
+  Tests the `reverse` method to ensure that the order of elements is correctly reversed.
+- **PBT: `test_filter`**
+  Validates that `filter` correctly removes elements that do not satisfy the given
+  predicate while maintaining the correct order.
+- **PBT: `test_map`**
+  Ensures `map` applies a transformation function to all elements in the array and
+  correctly updates their values.
+- **PBT: `test_reduce`**
+  Confirms that `reduce` accumulates elements using a specified function and
+  initial value, producing the correct result.
+- **PBT: `test_monoid_identity`**
+  Ensures that `empty()` returns a valid identity element for the dynamic array
+  in the context of Monoid properties.
+- **PBT: `test_monoid_associativity`**
+  Validates the Monoid associativity property, ensuring that concatenation
+  satisfies `(a • b) • c = a • (b • c)`.
 - **PBT: `test_iter`**
-  Verifies that the dynamic array supports iteration over its elements.
+  Verifies that the dynamic array supports iteration and that iterating over
+  the structure produces the correct sequence of elements.
+- **PBT: `test_hypothesis`**
+  Uses property-based testing to confirm that converting a list to a `DynamicArray`
+  and back to a list preserves all elements correctly.  
 
 ---
 
@@ -51,6 +76,8 @@ allocating additional chunks only when necessary.
 
 ## Changelog
 
+- 12.02.2025 - 2  
+   - Added missing methods, added missing unit tests and Property-based tests.
 - 12.02.2025 - 1  
    - Update README.
 - 10.02.2025 - 0  
