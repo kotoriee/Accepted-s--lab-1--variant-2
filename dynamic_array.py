@@ -63,7 +63,7 @@ class DynamicArray:
             self.data[self.size - 1] = None
             self.size -= 1
 
-    def size(self):
+    def __len__(self):
         """Return the number of elements in the array."""
         return self.size
 
