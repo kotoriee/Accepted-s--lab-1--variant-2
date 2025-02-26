@@ -65,7 +65,7 @@ allocating additional chunks only when necessary.
 - **PBT: `test_none_values`**
   Testing inputs of type None.
 - **PBT: `test_mixed_types`**
-  Testing various types of data input. 
+  Testing various types of data input.
 
 ---
 
@@ -81,7 +81,9 @@ allocating additional chunks only when necessary.
 ## Changelog
 
 - 26.02.2025 - 3  
-   - Added tests for None and other types of data, optimized hypothesis test, updated readme file.
+   - Added tests for None and other types of data.
+   - Optimized hypothesis test.
+   - Updated readme file.
 - 12.02.2025 - 2  
    - Added missing methods, added missing unit tests and Property-based tests.
 - 12.02.2025 - 1  

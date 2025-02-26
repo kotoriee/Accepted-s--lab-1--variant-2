@@ -96,10 +96,10 @@ def test_monoid_identity():
 def test_mixed_types():
     """Test storing elements of different types."""
     arr = DynamicArray()
-    arr.add(1)       # Integer
-    arr.add("hello") # String
-    arr.add(3.14)    # Float
-    arr.add(None)    # None
+    arr.add(1)        # Integer
+    arr.add("hello")  # String
+    arr.add(3.14)     # Float
+    arr.add(None)     # None
     assert arr.to_list() == [1, "hello", 3.14, None]
 
 
@@ -116,9 +116,11 @@ def test_monoid_associativity():
            arr1.concat(arr2.concat(arr3)).to_list()
 
 
-@given(st.lists(st.one_of(st.integers(), st.text(), st.floats(allow_nan=True), st.none())))
+@given(st.lists(st.one_of(st.integers(), st.text(),
+                          st.floats(allow_nan=True), st.none())))
 def test_hypothesis(lst):
-    """Test property-based input with Hypothesis, including mixed types and None."""
+    """Test property-based input with Hypothesis,
+    including mixed types and None."""
     arr = DynamicArray()
     arr.from_list(lst)
 
@@ -136,7 +138,8 @@ def test_hypothesis(lst):
         if element is None:
             # Use 'is' for None comparison
             assert retrieved_element is None, \
-                f"Element at index {i} should be None but got {retrieved_element}"
+                (f"Element at index {i} should be None "
+                 f"but got {retrieved_element}")
         elif isinstance(element, float) and math.isnan(element):
             # Handle NaN separately
             assert isinstance(retrieved_element, float) and math.isnan(
@@ -145,4 +148,5 @@ def test_hypothesis(lst):
         else:
             # For other types, use equality check
             assert retrieved_element == element, \
-                f"Values at index {i} do not match: {retrieved_element} vs {element}"
+                (f"Values at index {i} do not match:"
+                 f" {retrieved_element} vs {element}")
