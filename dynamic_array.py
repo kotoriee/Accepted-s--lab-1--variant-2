@@ -181,5 +181,3 @@ class DynamicArray(Generic[T]):
             if self.data[i] != other.data[i]:
                 return False
         return True
-
-        

@@ -315,11 +315,13 @@ def test_hypothesis(lst):
                 (f"Element at index {i} should be None "
                  f"but got {retrieved_element}")
         elif isinstance(element, float) and math.isnan(element):
-            assert isinstance(retrieved_element, float) and math.isnan(retrieved_element), \
+            assert (isinstance(retrieved_element, float) and 
+                   math.isnan(retrieved_element)), \
                 f"NaN mismatch via get() at index {i}"
         else:
             assert retrieved_element == element, \
-                f"Value mismatch via get() at index {i}: expected {element}, got {retrieved_element}"
+                (f"Value mismatch via get() at index {i}: "
+                 f"expected {element}, got {retrieved_element}")
 
 
 @given(st.lists(st.integers()),
@@ -385,5 +387,3 @@ def test_concat_pbt(lst):
     # Check the result
     assert arr1.to_list() == lst, "Concatenation failed"
     assert arr1.size == len(lst), "Size after concatenation is incorrect"
-
-    
