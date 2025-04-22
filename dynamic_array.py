@@ -5,7 +5,6 @@ This class implements a dynamic array with support for custom growth factors,
 standard list operations, and Monoid properties.
 """
 
-from functools import reduce
 from typing import TypeVar, Generic, List, Optional, Callable, Iterator, cast
 
 

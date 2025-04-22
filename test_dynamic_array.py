@@ -1,8 +1,8 @@
 import math
 import copy
 import pytest
-from hypothesis import given, strategies as st, settings, assume
-from typing import List, Any, Callable, TypeVar, cast
+from hypothesis import given, strategies as st, settings
+from typing import List, Any, Callable, TypeVar
 
 from dynamic_array import DynamicArray
 
@@ -249,7 +249,7 @@ def test_monoid_associativity_law(
     a_bc.concat(bc)
 
     # Compare the results directly
-    assert ab_c == a_bc, f"Associativity law failed"
+    assert ab_c == a_bc, "Associativity law failed"
 
 
 # --- Roundtrip Tests ---
