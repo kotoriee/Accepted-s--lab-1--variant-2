@@ -315,15 +315,11 @@ def test_hypothesis(lst):
                 (f"Element at index {i} should be None "
                  f"but got {retrieved_element}")
         elif isinstance(element, float) and math.isnan(element):
-            # Handle NaN separately
-            assert isinstance(retrieved_element, float) and math.isnan(
-                retrieved_element), \
-                f"Both values should be NaN at index {i}"
+            assert isinstance(retrieved_element, float) and math.isnan(retrieved_element), \
+                f"NaN mismatch via get() at index {i}"
         else:
-            # For other types, use equality check
             assert retrieved_element == element, \
-                (f"Values at index {i} do not match:"
-                 f" {retrieved_element} vs {element}")
+                f"Value mismatch via get() at index {i}: expected {element}, got {retrieved_element}"
 
 
 @given(st.lists(st.integers()),
