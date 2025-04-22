@@ -20,7 +20,8 @@ class DynamicArray(Generic[T]):
         Initialize the dynamic array.
 
         Parameters:
-        growth_factor (int): Factor by which the array grows when full. Default is 2.
+        growth_factor (int): Factor by which the array grows when full. 
+        Default is 2.
         """
         if not isinstance(growth_factor, int) or growth_factor <= 1:
             raise ValueError("Growth factor must be an integer greater than 1")
@@ -67,7 +68,8 @@ class DynamicArray(Generic[T]):
         return cast(T, self.data[index])
 
     def remove(self, value: T) -> None:
-        """Remove the first occurrence of an element by value, shifting elements left."""
+        """Remove the first occurrence of an element by value, 
+        shifting elements left."""
         found_index = -1
         for i in range(self.size):
             # Handle potential comparison issues (e.g., NaN != NaN)
@@ -157,7 +159,8 @@ class DynamicArray(Generic[T]):
                 self.data[i] = func(element)
 
     def reduce(self, func: Callable[[T, T], T], initial_value: T) -> T:
-        """Reduce the array to a single value using a function and initial value."""
+        """Reduce the array to a single value using a 
+        function and initial value."""
         result = initial_value
         for i in range(self.size):
             element = self.data[i]

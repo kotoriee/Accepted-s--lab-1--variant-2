@@ -27,7 +27,8 @@ list_st = st.lists(comparable_st, max_size=100)
 # Strategy to build DynamicArray instances directly
 @st.composite  # type: ignore
 def dynamic_array_st(draw: Callable[[st.SearchStrategy[Any]], Any],
-                     elements: st.SearchStrategy[Any] = comparable_st) -> DynamicArray[Any]:
+                     elements: st.SearchStrategy[Any] 
+                     = comparable_st) -> DynamicArray[Any]:
     """Strategy to generate DynamicArray instances."""
     lst = draw(st.lists(elements, max_size=100))
     arr: DynamicArray[Any] = DynamicArray()
