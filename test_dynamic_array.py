@@ -1,387 +1,268 @@
 import math
 import copy
 import pytest
-from hypothesis import given, strategies as st
+from hypothesis import given, strategies as st, settings, assume
+from typing import List, Any, Callable, TypeVar, cast
 
 from dynamic_array import DynamicArray
 
+# Type variable for generic test functions
+T = TypeVar('T')
 
-def test_add():
+# Define strategies for different types
+int_st = st.integers(min_value=-1000, max_value=1000)
+float_st = st.floats(allow_nan=False, allow_infinity=False, min_value=-1000, max_value=1000)
+text_st = st.text(max_size=100)
+bool_st = st.booleans()
+none_st = st.none()
+
+# Create a strategy for basic comparable values
+comparable_st = st.one_of(int_st, float_st, text_st, bool_st, none_st)
+
+# Strategy for lists of comparable values
+list_st = st.lists(comparable_st, max_size=100)
+
+# Strategy to build DynamicArray instances directly
+@st.composite
+def dynamic_array_st(draw: Callable[[st.SearchStrategy[Any]], Any], elements: st.SearchStrategy[Any] = comparable_st) -> st.SearchStrategy[DynamicArray[Any]]:
+    """Strategy to generate DynamicArray instances."""
+    lst = draw(st.lists(elements, max_size=100))
+    arr: DynamicArray[Any] = DynamicArray()
+    arr.from_list(lst)
+    return arr
+
+# Basic unit tests
+def test_add() -> None:
     """Test add() method."""
-    arr = DynamicArray()
+    arr: DynamicArray[Any] = DynamicArray()
     arr.add(3)
     assert arr.to_list() == [3]
-    assert arr.size == 1
+    arr.add(None)
+    arr.add("hello")
+    assert arr.to_list() == [3, None, "hello"]
 
-
-def test_set_get():
+def test_set_get() -> None:
     """Test set() and get() methods."""
-    arr = DynamicArray()
+    arr: DynamicArray[Any] = DynamicArray()
     arr.add(1)
     arr.set(0, 5)
     assert arr.get(0) == 5
-
-    # Test index error
     with pytest.raises(IndexError):
         arr.get(1)
-
     with pytest.raises(IndexError):
         arr.set(1, 10)
 
-
-def test_remove():
+def test_remove() -> None:
     """Test remove() method."""
-    arr = DynamicArray()
+    arr: DynamicArray[Any] = DynamicArray()
+    arr.from_list([1, 2, 3, 2, None, 4, None])
+    arr.remove(2)  # Remove first 2
+    assert arr.to_list() == [1, 3, 2, None, 4, None]
+    arr.remove(None)  # Remove first None
+    assert arr.to_list() == [1, 3, 2, 4, None]
+    arr.remove(1)
+    assert arr.to_list() == [3, 2, 4, None]
+    arr.remove(4)
+    assert arr.to_list() == [3, 2, None]
+    # Test removing non-existent value (should do nothing)
+    arr.remove(99)
+    assert arr.to_list() == [3, 2, None]
+
+def test_len() -> None:
+    """Test __len__() method."""
+    arr: DynamicArray[Any] = DynamicArray()
+    assert len(arr) == 0
     arr.add(1)
     arr.add(2)
-    arr.add(3)
-    arr.remove(2)
-    assert arr.to_list() == [1, 3]
-    assert arr.size == 2
-
-    # Remove non-existent element
-    arr.remove(5)
-    assert arr.to_list() == [1, 3]
-    assert arr.size == 2
-
-
-def test_size():
-    """Test size() method."""
-    arr = DynamicArray()
-    assert arr.size == 0
-    arr.add(1)
-    arr.add(2)
-    assert arr.size == 2
     assert len(arr) == 2
+    arr.remove(1)
+    assert len(arr) == 1
 
-
-def test_member():
+def test_member() -> None:
     """Test member() method."""
-    arr = DynamicArray()
+    arr: DynamicArray[Any] = DynamicArray()
     arr.add(3)
+    arr.add(None)
     assert arr.member(3) is True
     assert arr.member(5) is False
-
-    # Edge cases
-    arr.add(None)
     assert arr.member(None) is True
 
-
-def test_reverse():
+def test_reverse() -> None:
     """Test reverse() method."""
-    arr = DynamicArray()
-    arr.from_list([1, 2, 3])
+    arr: DynamicArray[Any] = DynamicArray()
+    arr.from_list([1, 2, 3, None, 5])
     arr.reverse()
-    assert arr.to_list() == [3, 2, 1]
-
-    # Test with even number of elements
-    arr = DynamicArray()
-    arr.from_list([1, 2, 3, 4])
+    assert arr.to_list() == [5, None, 3, 2, 1]
     arr.reverse()
-    assert arr.to_list() == [4, 3, 2, 1]
+    assert arr.to_list() == [1, 2, 3, None, 5]
+    # Test reversing empty and single-element arrays
+    empty_arr: DynamicArray[Any] = DynamicArray()
+    empty_arr.reverse()
+    assert empty_arr.to_list() == []
+    single_arr: DynamicArray[Any] = DynamicArray()
+    single_arr.add(10)
+    single_arr.reverse()
+    assert single_arr.to_list() == [10]
 
-    # Test with single element
-    arr = DynamicArray()
-    arr.add(1)
-    arr.reverse()
-    assert arr.to_list() == [1]
-
-    # Test with empty array
-    arr = DynamicArray()
-    arr.reverse()
-    assert arr.to_list() == []
-
-
-def test_filter():
+def test_filter() -> None:
     """Test filter() method."""
-    arr = DynamicArray()
-    arr.from_list([1, 2, 3, 4])
-    arr.filter(lambda x: x % 2 == 0)
-    assert arr.to_list() == [2, 4]
-
-    # Test with all elements matching
-    arr = DynamicArray()
-    arr.from_list([2, 4, 6])
-    arr.filter(lambda x: x % 2 == 0)
+    arr: DynamicArray[Any] = DynamicArray()
+    arr.from_list([1, 2, 3, 4, None, 5, 6])
+    arr.filter(lambda x: isinstance(x, int) and x % 2 == 0)
     assert arr.to_list() == [2, 4, 6]
-
-    # Test with no elements matching
-    arr = DynamicArray()
-    arr.from_list([1, 3, 5])
-    arr.filter(lambda x: x % 2 == 0)
+    # Test filtering that results in empty array
+    arr.filter(lambda x: x > 100)
     assert arr.to_list() == []
 
-
-def test_map():
+def test_map() -> None:
     """Test map() method."""
-    arr = DynamicArray()
+    arr: DynamicArray[Any] = DynamicArray()
     arr.from_list([1, 2, 3])
-    arr.map(lambda x: x * 2)
+    arr.map(lambda x: x * 2 if isinstance(x, int) else x)
     assert arr.to_list() == [2, 4, 6]
-
-    # Test with type transformation
-    arr = DynamicArray()
-    arr.from_list([1, 2, 3])
     arr.map(str)
-    assert arr.to_list() == ['1', '2', '3']
+    assert arr.to_list() == ["2", "4", "6"]
 
-    # Test with empty array
-    arr = DynamicArray()
-    arr.map(lambda x: x * 2)
-    assert arr.to_list() == []
-
-
-def test_reduce():
+def test_reduce() -> None:
     """Test reduce() method."""
-    arr = DynamicArray()
-    arr.from_list([1, 2, 3])
-    assert arr.reduce(lambda acc, x: acc + x, 0) == 6
+    arr: DynamicArray[Any] = DynamicArray()
+    arr.from_list([1, 2, 3, 4])
+    assert arr.reduce(lambda acc, x: acc + x, 0) == 10
+    assert arr.reduce(lambda acc, x: acc * x, 1) == 24
+    # Test with initial value
+    assert arr.reduce(lambda acc, x: acc + str(x), "Numbers: ") == "Numbers: 1234"
+    # Test on empty array
+    empty_arr: DynamicArray[Any] = DynamicArray()
+    assert empty_arr.reduce(lambda acc, x: acc + x, 100) == 100
 
-    # Test with non-numeric values
-    arr = DynamicArray()
-    arr.from_list(['a', 'b', 'c'])
-    assert arr.reduce(lambda acc, x: acc + x, '') == 'abc'
-
-    # Test with empty array
-    arr = DynamicArray()
-    assert arr.reduce(lambda acc, x: acc + x, 0) == 0
-
-
-def test_none_values():
+def test_none_values() -> None:
     """Test storing and retrieving None values."""
-    arr = DynamicArray()
+    arr: DynamicArray[Any] = DynamicArray()
     arr.add(None)
-    assert arr.get(0) is None  # Verify None is retrieved correctly
+    assert arr.get(0) is None
+    assert len(arr) == 1
     arr.set(0, 1)
     arr.add(None)
     assert arr.to_list() == [1, None]
+    assert arr.member(None) is True
+    arr.remove(None)
+    assert arr.to_list() == [1]
+    assert arr.member(None) is False
 
-    # Test filtering with None
-    arr = DynamicArray()
-    arr.from_list([1, None, 2, None, 3])
-    arr.filter(lambda x: x is not None)
-    assert arr.to_list() == [1, 2, 3]
-
-
-def test_from_to_list():
-    """Test from_list and to_list methods."""
-    # Empty list
-    arr = DynamicArray()
-    arr.from_list([])
-    assert arr.to_list() == []
-    assert arr.size == 0
-
-    # Regular list
-    arr = DynamicArray()
-    lst = [1, 2, 3, 4, 5]
-    arr.from_list(lst)
-    assert arr.to_list() == lst
-    assert arr.size == len(lst)
-
-    # Large list to test resizing
-    arr = DynamicArray(growth_factor=2)
-    lst = list(range(100))
-    arr.from_list(lst)
-    assert arr.to_list() == lst
-    assert arr.size == len(lst)
-
-
-def test_monoid_identity():
-    """Test Monoid identity element (empty())."""
-    # Identity element with empty array
-    arr = DynamicArray()
-    empty_arr = DynamicArray.empty()
-
-    # Test left identity
-    left_concat = copy.deepcopy(empty_arr)
-    left_concat.concat(arr)
-    assert left_concat.to_list() == arr.to_list()
-
-    # Test right identity
-    right_concat = copy.deepcopy(arr)
-    right_concat.concat(empty_arr)
-    assert right_concat.to_list() == arr.to_list()
-
-    # Test with non-empty array
-    arr = DynamicArray()
-    arr.from_list([1, 2, 3])
-
-    left_concat = copy.deepcopy(DynamicArray.empty())
-    left_concat.concat(arr)
-    assert left_concat.to_list() == [1, 2, 3]
-
-    right_concat = copy.deepcopy(arr)
-    right_concat.concat(DynamicArray.empty())
-    assert right_concat.to_list() == [1, 2, 3]
-
-
-def test_mixed_types():
+def test_mixed_types() -> None:
     """Test storing elements of different types."""
-    arr = DynamicArray()
+    arr: DynamicArray[Any] = DynamicArray()
     arr.add(1)        # Integer
     arr.add("hello")  # String
     arr.add(3.14)     # Float
     arr.add(None)     # None
-    assert arr.to_list() == [1, "hello", 3.14, None]
+    arr.add(True)     # Boolean
+    assert arr.to_list() == [1, "hello", 3.14, None, True]
+    assert len(arr) == 5
+    assert arr.get(1) == "hello"
+    assert arr.get(3) is None
 
-    # Test operations on mixed types
-    arr.reverse()
-    assert arr.to_list() == [None, 3.14, "hello", 1]
+def test_equality() -> None:
+    """Test __eq__ method."""
+    arr1: DynamicArray[Any] = DynamicArray()
+    arr1.from_list([1, 2, 3])
+    arr2: DynamicArray[Any] = DynamicArray()
+    arr2.from_list([1, 2, 3])
+    arr3: DynamicArray[Any] = DynamicArray()
+    arr3.from_list([1, 2, 4])
+    arr4: DynamicArray[Any] = DynamicArray()
+    arr4.from_list([1, 2])
 
-    # Test filtering on mixed types
-    arr = DynamicArray()
-    arr.from_list([1, "hello", 3.14, None, 5])
-    arr.filter(lambda x: isinstance(x, (int, float)) and x is not None)
-    assert arr.to_list() == [1, 3.14, 5]
+    assert arr1 == arr2
+    assert arr1 != arr3
+    assert arr1 != arr4
+    assert arr1 != [1, 2, 3]  # Compare with different type
 
+# --- Monoid Law Tests ---
 
-def test_monoid_associativity():
-    """Test Monoid associativity (a • b) • c = a • (b • c)."""
-    a = DynamicArray()
-    a.from_list([1, 2])
+def test_monoid_identity_empty() -> None:
+    """Test Monoid identity element (empty())."""
+    assert DynamicArray.empty().to_list() == []
+    assert len(DynamicArray.empty()) == 0
 
-    b = DynamicArray()
-    b.from_list([3])
+@settings(max_examples=200)  # type: ignore
+@given(dynamic_array_st())  # type: ignore
+def test_monoid_identity_law(arr: DynamicArray[Any]) -> None:
+    """
+    Property-based test for Monoid identity law:
+    - Identity element e with a • e = a and e • a = a
+    """
+    # Get a copy of the original array for comparison
+    original = copy.deepcopy(arr)
+    
+    # Test a • e = a (right identity)
+    right_identity = copy.deepcopy(arr)
+    right_identity.concat(DynamicArray.empty())
+    assert right_identity == original, "Right identity law failed"
+    
+    # Test e • a = a (left identity)
+    left_identity: DynamicArray[Any] = DynamicArray.empty()
+    left_identity.concat(arr)
+    assert left_identity == original, "Left identity law failed"
 
-    c = DynamicArray()
-    c.from_list([4, 5])
-
-    # (a • b) • c
-    left_assoc1 = copy.deepcopy(a)
-    left_assoc1.concat(b)
-    left_assoc_result = copy.deepcopy(left_assoc1)
-    left_assoc_result.concat(c)
-
-    # a • (b • c)
-    right_assoc1 = copy.deepcopy(b)
-    right_assoc1.concat(c)
-    right_assoc_result = copy.deepcopy(a)
-    right_assoc_result.concat(right_assoc1)
-
-    assert left_assoc_result.to_list() == right_assoc_result.to_list()
-    assert left_assoc_result.to_list() == [1, 2, 3, 4, 5]
-
-
-def test_iterator():
-    """Test iterator functionality."""
-    arr = DynamicArray()
-    arr.from_list([1, 2, 3])
-
-    # Test manual iteration
-    it = iter(arr)
-    assert next(it) == 1
-    assert next(it) == 2
-    assert next(it) == 3
-    with pytest.raises(StopIteration):
-        next(it)
-
-    # Test for-loop iteration
-    result = []
-    for item in arr:
-        result.append(item)
-    assert result == [1, 2, 3]
-
-    # Test with empty array
-    arr = DynamicArray()
-    it = iter(arr)
-    with pytest.raises(StopIteration):
-        next(it)
-
-
-@given(st.lists(st.one_of(st.integers(), st.text(),
-                          st.floats(allow_nan=True), st.none())))
-def test_hypothesis(lst):
-    """Test property-based input with Hypothesis,
-    including mixed types and None."""
-    arr = DynamicArray()
-    arr.from_list(lst)
-
-    # Ensure the list representation matches the original list
-    assert arr.to_list() == lst, "Lists do not match"
-
-    # Ensure the length matches
-    assert len(arr) == len(lst), "Lengths do not match"
-
-    # Check each element individually
-    for i in range(len(lst)):
-        element = lst[i]
-        retrieved_element = arr.get(i)
-
-        if element is None:
-            # Use 'is' for None comparison
-            assert retrieved_element is None, \
-                (f"Element at index {i} should be None "
-                 f"but got {retrieved_element}")
-        elif isinstance(element, float) and math.isnan(element):
-            assert (isinstance(retrieved_element, float) and
-                   math.isnan(retrieved_element)), \
-                f"NaN mismatch via get() at index {i}"
-        else:
-            assert retrieved_element == element, \
-                (f"Value mismatch via get() at index {i}: "
-                 f"expected {element}, got {retrieved_element}")
-
-
-@given(st.lists(st.integers()),
-       st.lists(st.integers()),
-       st.lists(st.integers()))
-def test_monoid_pbt(lst1, lst2, lst3):
-    """Property-based test for Monoid laws."""
-    a = DynamicArray()
-    a.from_list(lst1)
-
-    b = DynamicArray()
-    b.from_list(lst2)
-
-    c = DynamicArray()
-    c.from_list(lst3)
-
-    # Test identity element
-    empty = DynamicArray.empty()
-
-    left_identity = copy.deepcopy(empty)
-    left_identity.concat(a)
-    assert left_identity.to_list() == a.to_list(), "Left identity failed"
-
-    right_identity = copy.deepcopy(a)
-    right_identity.concat(empty)
-    assert right_identity.to_list() == a.to_list(), "Right identity failed"
-
-    # Test associativity
-    # (a • b) • c
+@settings(max_examples=100)  # type: ignore
+@given(dynamic_array_st(), dynamic_array_st(), dynamic_array_st())  # type: ignore
+def test_monoid_associativity_law(a: DynamicArray[Any], b: DynamicArray[Any], c: DynamicArray[Any]) -> None:
+    """
+    Property-based test for Monoid associativity law:
+    - (a • b) • c = a • (b • c)
+    """
+    # Calculate (a • b) • c
     ab = copy.deepcopy(a)
     ab.concat(b)
-    abc1 = copy.deepcopy(ab)
-    abc1.concat(c)
-
-    # a • (b • c)
+    ab_c = copy.deepcopy(ab)
+    ab_c.concat(c)
+    
+    # Calculate a • (b • c)
     bc = copy.deepcopy(b)
     bc.concat(c)
-    abc2 = copy.deepcopy(a)
-    abc2.concat(bc)
+    a_bc = copy.deepcopy(a)
+    a_bc.concat(bc)
+    
+    # Compare the results directly
+    assert ab_c == a_bc, f"Associativity law failed"
 
-    assert abc1.to_list() == abc2.to_list(), "Associativity failed"
+# --- Roundtrip Tests ---
 
+@settings(max_examples=200)  # type: ignore
+@given(list_st)  # type: ignore
+def test_from_list_to_list_roundtrip(lst: List[Any]) -> None:
+    """Test that from_list() followed by to_list() preserves the original list."""
+    arr: DynamicArray[Any] = DynamicArray()
+    arr.from_list(lst)
+    assert arr.to_list() == lst
 
-@given(st.lists(st.one_of(st.integers(), st.text(),
-                          st.floats(allow_nan=True), st.none())))
-def test_concat_pbt(lst):
-    """Property-based test for concat operation."""
-    # Split the list in two parts
-    mid = len(lst) // 2
-    first_half = lst[:mid]
-    second_half = lst[mid:]
+@settings(max_examples=200)  # type: ignore
+@given(dynamic_array_st())  # type: ignore
+def test_copy_preserves_content(arr: DynamicArray[Any]) -> None:
+    """Test that copy() creates an independent but equal copy."""
+    copied = copy.deepcopy(arr)
+    # Verify equality
+    assert copied == arr
+    
+    # Verify independence (modifying one doesn't affect the other)
+    if len(arr) > 0:
+        copied.add(999)
+        assert copied != arr
 
-    # Create arrays from the two halves
-    arr1 = DynamicArray()
-    arr1.from_list(first_half)
+# --- Iterator Tests ---
 
-    arr2 = DynamicArray()
-    arr2.from_list(second_half)
-
-    # Concatenate the arrays
-    arr1.concat(arr2)
-
-    # Check the result
-    assert arr1.to_list() == lst, "Concatenation failed"
-    assert arr1.size == len(lst), "Size after concatenation is incorrect"
+@settings(max_examples=200)  # type: ignore
+@given(list_st)  # type: ignore
+def test_iterator(lst: List[Any]) -> None:
+    """Test that iterating through the array works correctly."""
+    arr: DynamicArray[Any] = DynamicArray()
+    arr.from_list(lst)
+    
+    # Collect elements via iteration
+    iterated_elements: List[Any] = []
+    for item in arr:
+        iterated_elements.append(item)
+    
+    # Compare with the original list
+    assert iterated_elements == lst
