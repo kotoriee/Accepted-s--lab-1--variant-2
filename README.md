@@ -79,7 +79,10 @@ allocating additional chunks only when necessary.
 ---
 
 ## Changelog
-
+- 23.04.2025 - 4 
+  - concat should be mutable
+  - PBT for monoid 
+  - Static types for polimorphic data structure
 - 26.02.2025 - 3  
    - Added tests for None and other types of data.
    - Optimized hypothesis test.
