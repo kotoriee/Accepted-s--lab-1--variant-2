@@ -8,7 +8,9 @@ standard list operations, and Monoid properties.
 from functools import reduce
 from typing import TypeVar, Generic, List, Optional, Callable, Iterator, cast
 
+
 T = TypeVar('T')  # Type variable for polymorphic type support
+
 
 class DynamicArray(Generic[T]):
     """A dynamic array with custom growth factor and Monoid properties."""

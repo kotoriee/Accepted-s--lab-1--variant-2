@@ -11,7 +11,8 @@ T = TypeVar('T')
 
 # Define strategies for different types
 int_st = st.integers(min_value=-1000, max_value=1000)
-float_st = st.floats(allow_nan=False, allow_infinity=False, min_value=-1000, max_value=1000)
+float_st = st.floats(allow_nan=False, allow_infinity=False, 
+                     min_value=-1000, max_value=1000)
 text_st = st.text(max_size=100)
 bool_st = st.booleans()
 none_st = st.none()
@@ -22,14 +23,17 @@ comparable_st = st.one_of(int_st, float_st, text_st, bool_st, none_st)
 # Strategy for lists of comparable values
 list_st = st.lists(comparable_st, max_size=100)
 
+
 # Strategy to build DynamicArray instances directly
 @st.composite  # type: ignore
-def dynamic_array_st(draw: Callable[[st.SearchStrategy[Any]], Any], elements: st.SearchStrategy[Any] = comparable_st) -> DynamicArray[Any]:
+def dynamic_array_st(draw: Callable[[st.SearchStrategy[Any]], Any], 
+                    elements: st.SearchStrategy[Any] = comparable_st) -> DynamicArray[Any]:
     """Strategy to generate DynamicArray instances."""
     lst = draw(st.lists(elements, max_size=100))
     arr: DynamicArray[Any] = DynamicArray()
     arr.from_list(lst)
     return arr
+
 
 # Basic unit tests
 def test_add() -> None:
@@ -41,6 +45,7 @@ def test_add() -> None:
     arr.add("hello")
     assert arr.to_list() == [3, None, "hello"]
 
+
 def test_set_get() -> None:
     """Test set() and get() methods."""
     arr: DynamicArray[Any] = DynamicArray()
@@ -51,6 +56,7 @@ def test_set_get() -> None:
         arr.get(1)
     with pytest.raises(IndexError):
         arr.set(1, 10)
+
 
 def test_remove() -> None:
     """Test remove() method."""
@@ -68,6 +74,7 @@ def test_remove() -> None:
     arr.remove(99)
     assert arr.to_list() == [3, 2, None]
 
+
 def test_len() -> None:
     """Test __len__() method."""
     arr: DynamicArray[Any] = DynamicArray()
@@ -78,6 +85,7 @@ def test_len() -> None:
     arr.remove(1)
     assert len(arr) == 1
 
+
 def test_member() -> None:
     """Test member() method."""
     arr: DynamicArray[Any] = DynamicArray()
@@ -86,6 +94,7 @@ def test_member() -> None:
     assert arr.member(3) is True
     assert arr.member(5) is False
     assert arr.member(None) is True
+
 
 def test_reverse() -> None:
     """Test reverse() method."""
@@ -104,6 +113,7 @@ def test_reverse() -> None:
     single_arr.reverse()
     assert single_arr.to_list() == [10]
 
+
 def test_filter() -> None:
     """Test filter() method."""
     arr: DynamicArray[Any] = DynamicArray()
@@ -114,6 +124,7 @@ def test_filter() -> None:
     arr.filter(lambda x: x > 100)
     assert arr.to_list() == []
 
+
 def test_map() -> None:
     """Test map() method."""
     arr: DynamicArray[Any] = DynamicArray()
@@ -122,6 +133,7 @@ def test_map() -> None:
     assert arr.to_list() == [2, 4, 6]
     arr.map(str)
     assert arr.to_list() == ["2", "4", "6"]
+
 
 def test_reduce() -> None:
     """Test reduce() method."""
@@ -134,6 +146,7 @@ def test_reduce() -> None:
     # Test on empty array
     empty_arr: DynamicArray[Any] = DynamicArray()
     assert empty_arr.reduce(lambda acc, x: acc + x, 100) == 100
+
 
 def test_none_values() -> None:
     """Test storing and retrieving None values."""
@@ -149,6 +162,7 @@ def test_none_values() -> None:
     assert arr.to_list() == [1]
     assert arr.member(None) is False
 
+
 def test_mixed_types() -> None:
     """Test storing elements of different types."""
     arr: DynamicArray[Any] = DynamicArray()
@@ -161,6 +175,7 @@ def test_mixed_types() -> None:
     assert len(arr) == 5
     assert arr.get(1) == "hello"
     assert arr.get(3) is None
+
 
 def test_equality() -> None:
     """Test __eq__ method."""
@@ -178,12 +193,14 @@ def test_equality() -> None:
     assert arr1 != arr4
     assert arr1 != [1, 2, 3]  # Compare with different type
 
+
 # --- Monoid Law Tests ---
 
 def test_monoid_identity_empty() -> None:
     """Test Monoid identity element (empty())."""
     assert DynamicArray.empty().to_list() == []
     assert len(DynamicArray.empty()) == 0
+
 
 @settings(max_examples=200)  # type: ignore
 @given(dynamic_array_st())  # type: ignore
@@ -205,9 +222,11 @@ def test_monoid_identity_law(arr: DynamicArray[Any]) -> None:
     left_identity.concat(arr)
     assert left_identity == original, "Left identity law failed"
 
+
 @settings(max_examples=100)  # type: ignore
 @given(dynamic_array_st(), dynamic_array_st(), dynamic_array_st())  # type: ignore
-def test_monoid_associativity_law(a: DynamicArray[Any], b: DynamicArray[Any], c: DynamicArray[Any]) -> None:
+def test_monoid_associativity_law(a: DynamicArray[Any], b: DynamicArray[Any], 
+                                 c: DynamicArray[Any]) -> None:
     """
     Property-based test for Monoid associativity law:
     - (a • b) • c = a • (b • c)
@@ -227,6 +246,7 @@ def test_monoid_associativity_law(a: DynamicArray[Any], b: DynamicArray[Any], c:
     # Compare the results directly
     assert ab_c == a_bc, f"Associativity law failed"
 
+
 # --- Roundtrip Tests ---
 
 @settings(max_examples=200)  # type: ignore
@@ -236,6 +256,7 @@ def test_from_list_to_list_roundtrip(lst: List[Any]) -> None:
     arr: DynamicArray[Any] = DynamicArray()
     arr.from_list(lst)
     assert arr.to_list() == lst
+
 
 @settings(max_examples=200)  # type: ignore
 @given(dynamic_array_st())  # type: ignore
@@ -249,6 +270,7 @@ def test_copy_preserves_content(arr: DynamicArray[Any]) -> None:
     if len(arr) > 0:
         copied.add(999)
         assert copied != arr
+
 
 # --- Iterator Tests ---
 
