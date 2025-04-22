@@ -142,7 +142,9 @@ def test_reduce() -> None:
     assert arr.reduce(lambda acc, x: acc + x, 0) == 10
     assert arr.reduce(lambda acc, x: acc * x, 1) == 24
     # Test with initial value
-    assert arr.reduce(lambda acc, x: acc + str(x), "Numbers: ") == "Numbers: 1234"
+    assert arr.reduce(
+        lambda acc, x: acc + str(x), "Numbers: "
+    ) == "Numbers: 1234"
     # Test on empty array
     empty_arr: DynamicArray[Any] = DynamicArray()
     assert empty_arr.reduce(lambda acc, x: acc + x, 100) == 100
@@ -225,8 +227,9 @@ def test_monoid_identity_law(arr: DynamicArray[Any]) -> None:
 
 @settings(max_examples=100)  # type: ignore
 @given(dynamic_array_st(), dynamic_array_st(), dynamic_array_st())  # type: ignore
-def test_monoid_associativity_law(a: DynamicArray[Any], b: DynamicArray[Any], 
-                                 c: DynamicArray[Any]) -> None:
+def test_monoid_associativity_law(
+    a: DynamicArray[Any], b: DynamicArray[Any], c: DynamicArray[Any]
+) -> None:
     """
     Property-based test for Monoid associativity law:
     - (a • b) • c = a • (b • c)

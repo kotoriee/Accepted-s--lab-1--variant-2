@@ -35,7 +35,8 @@ class DynamicArray(Generic[T]):
         new_capacity = self.capacity * self.growth_factor
         # Handle potential overflow if capacity becomes extremely large
         if new_capacity <= self.capacity:
-            new_capacity = self.capacity + 1  # Minimal increase if multiplication overflows
+            # Minimal increase if multiplication overflows
+            new_capacity = self.capacity + 1
 
         new_data: List[Optional[T]] = [None] * new_capacity
         for i in range(self.size):
@@ -103,7 +104,8 @@ class DynamicArray(Generic[T]):
         """Initialize or overwrite the dynamic array from a Python list."""
         list_len = len(lst)
         # Ensure capacity is sufficient, potentially pre-allocate more
-        required_capacity = max(list_len, 1)  # Need at least 1 even for empty list
+        # Need at least 1 even for empty list
+        required_capacity = max(list_len, 1)
         if required_capacity > self.capacity:
             # Resize based on growth factor for better amortization
             new_capacity = self.capacity
@@ -111,7 +113,8 @@ class DynamicArray(Generic[T]):
                 new_capacity *= self.growth_factor
                 # Handle potential overflow
                 if new_capacity <= self.capacity:
-                    new_capacity = required_capacity  # Fallback if growth factor fails
+                    # Fallback if growth factor fails
+                    new_capacity = required_capacity
                     break
             self.capacity = new_capacity
             self.data = [None] * self.capacity
@@ -184,7 +187,8 @@ class DynamicArray(Generic[T]):
                 if new_capacity <= self.capacity:
                     new_capacity = required_capacity
                     break
-            self._resize_to(new_capacity)  # Helper function for specific capacity
+            # Helper function for specific capacity
+            self._resize_to(new_capacity)
 
         # Append elements from other
         for i in range(other.size):
