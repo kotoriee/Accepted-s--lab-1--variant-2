@@ -315,7 +315,7 @@ def test_hypothesis(lst):
                 (f"Element at index {i} should be None "
                  f"but got {retrieved_element}")
         elif isinstance(element, float) and math.isnan(element):
-            assert (isinstance(retrieved_element, float) and 
+            assert (isinstance(retrieved_element, float) and
                    math.isnan(retrieved_element)), \
                 f"NaN mismatch via get() at index {i}"
         else:
