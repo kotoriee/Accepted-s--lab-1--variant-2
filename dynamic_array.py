@@ -6,10 +6,14 @@ standard list operations, and Monoid properties.
 """
 
 from functools import reduce
-from typing import TypeVar, Generic, List, Callable, Any, Optional, Iterator, Union, overload
+from typing import (
+    TypeVar, Generic, List, Callable, Optional, Iterator
+)
+
 
 T = TypeVar('T')  # Define a type variable for generic typing
 U = TypeVar('U')  # For transform functions
+
 
 class DynamicArray(Generic[T]):
     """A dynamic array with custom growth factor and Monoid properties."""
@@ -23,7 +27,8 @@ class DynamicArray(Generic[T]):
         """
         self.capacity: int = 1  # Initial capacity
         self.size: int = 0  # Number of elements
-        self.data: List[Optional[T]] = [None] * self.capacity  # Internal storage
+        # Internal storage
+        self.data: List[Optional[T]] = [None] * self.capacity
         self.growth_factor: int = growth_factor
 
     def _resize(self) -> None:
@@ -80,7 +85,9 @@ class DynamicArray(Generic[T]):
     def reverse(self) -> None:
         """Reverse the array in-place."""
         for i in range(self.size // 2):
-            self.data[i], self.data[self.size - 1 - i] = self.data[self.size - 1 - i], self.data[i]
+            self.data[i], self.data[self.size - 1 - i] = (
+                self.data[self.size - 1 - i], self.data[i]
+            )
 
     def from_list(self, lst: List[T]) -> None:
         """Initialize the dynamic array from a Python list."""
@@ -89,10 +96,10 @@ class DynamicArray(Generic[T]):
         # Make sure we have enough capacity with growth factor in mind
         while self.capacity < len(lst):
             self.capacity *= self.growth_factor
-            
+
         self.size = len(lst)
         self.data = [None] * self.capacity  # Reset the data array
-        
+
         for i in range(len(lst)):
             self.data[i] = lst[i]
 
@@ -108,7 +115,7 @@ class DynamicArray(Generic[T]):
                 if i != j:
                     self.data[j] = self.data[i]
                 j += 1
-        
+
         # Clear remaining elements and update size
         for i in range(j, self.size):
             self.data[i] = None
@@ -138,16 +145,16 @@ class DynamicArray(Generic[T]):
         """
         if not isinstance(other, DynamicArray):
             raise TypeError("Can only concatenate with another DynamicArray")
-        
+
         # Ensure we have enough capacity
         required_capacity = self.size + other.size
         while self.capacity < required_capacity:
             self._resize()
-            
+
         # Copy elements from other array
         for i in range(other.size):
             self.data[self.size + i] = other.data[i]
-        
+
         # Update size
         self.size += other.size
 
@@ -163,7 +170,7 @@ class DynamicArray(Generic[T]):
             self._iter_index += 1
             return value
         raise StopIteration
-        
+
     def __eq__(self, other: object) -> bool:
         """Check equality with another DynamicArray."""
         if not isinstance(other, DynamicArray):
@@ -174,3 +181,5 @@ class DynamicArray(Generic[T]):
             if self.data[i] != other.data[i]:
                 return False
         return True
+
+        
