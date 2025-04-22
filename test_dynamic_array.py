@@ -257,7 +257,8 @@ def test_monoid_associativity_law(
 @settings(max_examples=200)  # type: ignore
 @given(list_st)  # type: ignore
 def test_from_list_to_list_roundtrip(lst: List[Any]) -> None:
-    """Test that from_list() followed by to_list() preserves the original list."""
+    """Test that from_list() followed by to_list()
+    preserves the original list."""
     arr: DynamicArray[Any] = DynamicArray()
     arr.from_list(lst)
     assert arr.to_list() == lst

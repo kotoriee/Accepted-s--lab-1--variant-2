@@ -20,7 +20,7 @@ class DynamicArray(Generic[T]):
         Initialize the dynamic array.
 
         Parameters:
-        growth_factor (int): Factor by which the array grows when full. 
+        growth_factor (int): Factor by which the array grows when full.
         Default is 2.
         """
         if not isinstance(growth_factor, int) or growth_factor <= 1:
@@ -68,7 +68,7 @@ class DynamicArray(Generic[T]):
         return cast(T, self.data[index])
 
     def remove(self, value: T) -> None:
-        """Remove the first occurrence of an element by value, 
+        """Remove the first occurrence of an element by value,
         shifting elements left."""
         found_index = -1
         for i in range(self.size):
@@ -99,7 +99,8 @@ class DynamicArray(Generic[T]):
         """Reverse the array in-place."""
         left, right = 0, self.size - 1
         while left < right:
-            self.data[left], self.data[right] = self.data[right], self.data[left]
+            self.data[left], self.data[right] = \
+                self.data[right], self.data[left]
             left += 1
             right -= 1
 
@@ -159,7 +160,7 @@ class DynamicArray(Generic[T]):
                 self.data[i] = func(element)
 
     def reduce(self, func: Callable[[T, T], T], initial_value: T) -> T:
-        """Reduce the array to a single value using a 
+        """Reduce the array to a single value using a
         function and initial value."""
         result = initial_value
         for i in range(self.size):
