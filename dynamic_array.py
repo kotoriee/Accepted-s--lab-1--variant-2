@@ -26,7 +26,8 @@ class DynamicArray(Generic[T]):
             raise ValueError("Growth factor must be an integer greater than 1")
         self.capacity: int = 1  # Initial capacity
         self.size: int = 0  # Number of elements
-        self.data: List[Optional[T]] = [None] * self.capacity  # Internal storage
+        self.data: List[Optional[T]] = [None] * \
+            self.capacity  # Internal storage
         self.growth_factor: int = growth_factor
         self._iter_index: int = 0  # Initialize iterator index
 
@@ -199,7 +200,8 @@ class DynamicArray(Generic[T]):
     def _resize_to(self, new_capacity: int) -> None:
         """Resize the internal array to a specific new capacity."""
         if new_capacity < self.size:
-            raise ValueError("New capacity cannot be smaller than current size")
+            raise ValueError(
+                "New capacity cannot be smaller than current size")
         if new_capacity == self.capacity:
             return  # No change needed
 
@@ -237,7 +239,10 @@ class DynamicArray(Generic[T]):
 
     def __repr__(self) -> str:
         """Return a detailed string representation."""
-        return f"DynamicArray(size={self.size}, capacity={self.capacity}, data={self.to_list()})"
+        return f"DynamicArray(size={
+            self.size}, capacity={
+            self.capacity}, data={
+            self.to_list()})"
 
     def __eq__(self, other: object) -> bool:
         """Check equality based on content."""

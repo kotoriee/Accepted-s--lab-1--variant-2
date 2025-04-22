@@ -11,7 +11,7 @@ T = TypeVar('T')
 
 # Define strategies for different types
 int_st = st.integers(min_value=-1000, max_value=1000)
-float_st = st.floats(allow_nan=False, allow_infinity=False, 
+float_st = st.floats(allow_nan=False, allow_infinity=False,
                      min_value=-1000, max_value=1000)
 text_st = st.text(max_size=100)
 bool_st = st.booleans()
@@ -26,8 +26,8 @@ list_st = st.lists(comparable_st, max_size=100)
 
 # Strategy to build DynamicArray instances directly
 @st.composite  # type: ignore
-def dynamic_array_st(draw: Callable[[st.SearchStrategy[Any]], Any], 
-                    elements: st.SearchStrategy[Any] = comparable_st) -> DynamicArray[Any]:
+def dynamic_array_st(draw: Callable[[st.SearchStrategy[Any]], Any],
+                     elements: st.SearchStrategy[Any] = comparable_st) -> DynamicArray[Any]:
     """Strategy to generate DynamicArray instances."""
     lst = draw(st.lists(elements, max_size=100))
     arr: DynamicArray[Any] = DynamicArray()
@@ -213,12 +213,12 @@ def test_monoid_identity_law(arr: DynamicArray[Any]) -> None:
     """
     # Get a copy of the original array for comparison
     original = copy.deepcopy(arr)
-    
+
     # Test a • e = a (right identity)
     right_identity = copy.deepcopy(arr)
     right_identity.concat(DynamicArray.empty())
     assert right_identity == original, "Right identity law failed"
-    
+
     # Test e • a = a (left identity)
     left_identity: DynamicArray[Any] = DynamicArray.empty()
     left_identity.concat(arr)
@@ -226,7 +226,8 @@ def test_monoid_identity_law(arr: DynamicArray[Any]) -> None:
 
 
 @settings(max_examples=100)  # type: ignore
-@given(dynamic_array_st(), dynamic_array_st(), dynamic_array_st())  # type: ignore
+@given(dynamic_array_st(), dynamic_array_st(),
+       dynamic_array_st())  # type: ignore
 def test_monoid_associativity_law(
     a: DynamicArray[Any], b: DynamicArray[Any], c: DynamicArray[Any]
 ) -> None:
@@ -239,13 +240,13 @@ def test_monoid_associativity_law(
     ab.concat(b)
     ab_c = copy.deepcopy(ab)
     ab_c.concat(c)
-    
+
     # Calculate a • (b • c)
     bc = copy.deepcopy(b)
     bc.concat(c)
     a_bc = copy.deepcopy(a)
     a_bc.concat(bc)
-    
+
     # Compare the results directly
     assert ab_c == a_bc, f"Associativity law failed"
 
@@ -268,7 +269,7 @@ def test_copy_preserves_content(arr: DynamicArray[Any]) -> None:
     copied = copy.deepcopy(arr)
     # Verify equality
     assert copied == arr
-    
+
     # Verify independence (modifying one doesn't affect the other)
     if len(arr) > 0:
         copied.add(999)
@@ -283,11 +284,11 @@ def test_iterator(lst: List[Any]) -> None:
     """Test that iterating through the array works correctly."""
     arr: DynamicArray[Any] = DynamicArray()
     arr.from_list(lst)
-    
+
     # Collect elements via iteration
     iterated_elements: List[Any] = []
     for item in arr:
         iterated_elements.append(item)
-    
+
     # Compare with the original list
     assert iterated_elements == lst
