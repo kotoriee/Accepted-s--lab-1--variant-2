@@ -80,7 +80,7 @@ allocating additional chunks only when necessary.
 
 ## Changelog
 
-- 22.04.2025 - 3  
+- 22.04.2025 - 4  
    - concat should be mutable.
    - PBT for monoid.
    - Static types for polimorphic data structure.
