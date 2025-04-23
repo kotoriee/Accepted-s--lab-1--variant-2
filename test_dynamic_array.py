@@ -24,7 +24,7 @@ list_st = st.lists(comparable_st, max_size=100)
 
 
 # Strategy to build DynamicArray instances directly
-@st.composite  # type: ignore
+@st.composite
 def dynamic_array_st(draw: Callable[[st.SearchStrategy[Any]], Any],
                      elements: st.SearchStrategy[Any]
                      = comparable_st) -> DynamicArray[Any]:
@@ -204,8 +204,8 @@ def test_monoid_identity_empty() -> None:
     assert len(DynamicArray.empty()) == 0
 
 
-@settings(max_examples=200)  # type: ignore
-@given(dynamic_array_st())  # type: ignore
+@settings(max_examples=200)
+@given(dynamic_array_st())
 def test_monoid_identity_law(arr: DynamicArray[Any]) -> None:
     """
     Property-based test for Monoid identity law:
@@ -225,9 +225,9 @@ def test_monoid_identity_law(arr: DynamicArray[Any]) -> None:
     assert left_identity == original, "Left identity law failed"
 
 
-@settings(max_examples=100)  # type: ignore
+@settings(max_examples=100)
 @given(dynamic_array_st(), dynamic_array_st(),
-       dynamic_array_st())  # type: ignore
+       dynamic_array_st())
 def test_monoid_associativity_law(
     a: DynamicArray[Any], b: DynamicArray[Any], c: DynamicArray[Any]
 ) -> None:
@@ -253,8 +253,8 @@ def test_monoid_associativity_law(
 
 # --- Roundtrip Tests ---
 
-@settings(max_examples=200)  # type: ignore
-@given(list_st)  # type: ignore
+@settings(max_examples=200)
+@given(list_st)
 def test_from_list_to_list_roundtrip(lst: List[Any]) -> None:
     """Test that from_list() followed by to_list()
     preserves the original list."""
@@ -263,8 +263,8 @@ def test_from_list_to_list_roundtrip(lst: List[Any]) -> None:
     assert arr.to_list() == lst
 
 
-@settings(max_examples=200)  # type: ignore
-@given(dynamic_array_st())  # type: ignore
+@settings(max_examples=200)
+@given(dynamic_array_st())
 def test_copy_preserves_content(arr: DynamicArray[Any]) -> None:
     """Test that copy() creates an independent but equal copy."""
     copied = copy.deepcopy(arr)
@@ -279,8 +279,8 @@ def test_copy_preserves_content(arr: DynamicArray[Any]) -> None:
 
 # --- Iterator Tests ---
 
-@settings(max_examples=200)  # type: ignore
-@given(list_st)  # type: ignore
+@settings(max_examples=200)
+@given(list_st)
 def test_iterator(lst: List[Any]) -> None:
     """Test that iterating through the array works correctly."""
     arr: DynamicArray[Any] = DynamicArray()
